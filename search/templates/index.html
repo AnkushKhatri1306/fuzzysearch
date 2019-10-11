@@ -1,8 +1,67 @@
+{% load staticfiles %}
 <html>
     <head>
-        <title>Django Search</title>
+        <title>Fuzzy Search</title>
+        <link rel="stylesheet"  href="{% static '/css/bootstrap.min.css' %}" type="text/css">
+        <link rel="stylesheet"  href="{% static '/css/custom.css' %}" type="text/css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet"  href="{% static '/css/dropdown.css' %}" type="text/css">
+        <link rel="stylesheet"  href="{% static '/css/transition.css' %}" type="text/css">
+        <script  src="{% static 'js/jquery.min.js' %}"></script>
+        <script  src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script  src="{% static 'js/chosen.jquery.js' %}"></script>
+        <script  src="{% static 'js/dropdown.js' %}"></script>
+        <script  src="{% static 'js/transition.js' %}"></script>
     </head>
     <body>
         <h1>Successfull Render</h1>
+        <!--<form action="/home/search_val/{{ search_str }}" method="get">
+            {% csrf_token %}
+            {{ form }}
+            <input type="text" value="{{ search_str }}" name="search_str">
+            <button type="submit">Submit</button>
+        </form>-->
+        <form class="p-l-2per">
+            {% csrf_token %}
+            {{ form }}
+            <input class="w-15per" autocomplete="off" oninput="myFunction()" type="text" value="{{ search_str }}" id="search_str" name="search_str">
+            <button type="button" onclick="myFunction()">Submit</button>
+
+            <div class="option-container" id="optionContainer"></div>
+        </form>
     </body>
 </html>
+
+<script type="text/javascript">
+    function myFunction() {
+        search_str = document.getElementById('search_str').value;
+
+        $.ajax({
+          url: "http://127.0.0.1:9001/home/search_val/",
+          type: "get",
+          data: {
+            search_str: search_str
+          },
+          success: function(response) {
+            //Do Something
+            console.log(response);
+            htm = '<ul>'
+            li_str = ''
+            for(var i=0; i<response.length; i++){
+               li_str += "<div class='drop-div' id='list"+i+"' value='"+response[i].name+"' onClick='selectValue(" + i + ")'>"+ response[i].name + "</div>";
+            }
+            document.getElementById("optionContainer").innerHTML = '<div  class="hand-pointer scroll-drop-div">' + li_str + '</div>';
+          },
+          error: function(xhr) {
+            //Do Something to handle error
+          }
+        });
+    }
+
+    function selectValue(index){
+        console.log(index);
+        a = document.getElementById('list'+index).getAttribute('value');
+        console.log(a);
+        document.getElementById("search_str").value = a;
+    }
+</script>

@@ -17,5 +17,7 @@ from search import views
 from django.urls import path
 
 urlpatterns = [
-    path('', views.home, name='home')
+    path('search/', views.home, name='home'),
+    path('search_val/', views.search, name='home'),
+    path('save_data_set/', views.save_data_set, name='save_data_set'),
 ]
